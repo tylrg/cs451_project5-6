@@ -133,7 +133,7 @@ document.getElementById('get-text').addEventListener(
 	function () {
 		var text = document.getElementById("msg-send").value;
 		//var base = wasm.double(text);
-		wasm.double(text);
+		//wasm.double(text);
 		//console.log(base);
 	},
 	false

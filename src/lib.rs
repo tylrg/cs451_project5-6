@@ -67,56 +67,21 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
         }
         header_bytes.push(ret[i]);
         if header_bytes[header_bytes.len()-1] == 10 {
-            log_value("Found a newline");
+            //log_value("Found a newline");
             newline_count+=1;
         }
     }
     let header_message = str::from_utf8(&header_bytes).unwrap();
-    log_value("Header");
-    log_value(header_message);
+    //log_value("Header");
+    //log_value(header_message);
 
-    log_value("Start");
+    //log_value("Start");
     for _i in 0..start{
-        log_value(" ");
+        //log_value(" ");
     }
     //log_value(start);
 
-    
-
-    // for i in start..ret.len() {
-    //     let chunk = &ret[i..i+8];
-        
-
-
-    //     // ppm pixels are groups of 3 values
-    //     // r g b
-    //     // (255, 255, 255) = white
-    //     // (0, 0, 0) = black
-    //     ret[i] = 182;
-    // }
-
-    //let mut base_ptr = start;
-    //log_value("Message");
-    let swag = encode_message(&input,ret.clone(),start);
-    // for i in 0..input.len(){
-    //     let character = &input[i..i+1];
-    //     log_value(character);
-    //     let chunk = &ret[base_ptr..base_ptr+8];
-    //     log_value("Got a chunk");
-    //     let encoded = encode_character(character.chars().next().unwrap(),chunk);
-    //     log_value("Encoded!");
-
-    //     let mut j = 0;
-    //     for r in base_ptr..ret.len(){
-    //         ret[r]=encoded[j];
-    //         j+=1; 
-    //     }
-    //     base_ptr+=8;
-    // }
-
-    // now we're going to turn the entire image orange:
-    // (255, 69, 0)
-    
+    let swag = encode_message(&input,ret.clone(),start);    
 
     let mut assembled: Vec<u8> = Vec::new();
     for h in header_bytes{
@@ -128,11 +93,6 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
         ret[val+start] = swag[val];
     }
 
-    // for l in 0..start{
-    //     ret[l] = assembled[l];
-    // }
-    
-
     ret.as_ptr()
 }
 
@@ -141,14 +101,14 @@ pub fn get_text(input: &str) -> String {
     String::from(input)
 }
 
-#[wasm_bindgen]
-pub fn double(input: &str) -> String {
-    let base = String::from(input);
-    let base = format!("{}{}",base,base);
-    log_value("This is from rust VVVV");
-    log_value(&base[0..base.len()]);
-    return base;
-}
+// #[wasm_bindgen]
+// pub fn double(input: &str) -> String {
+//     let base = String::from(input);
+//     let base = format!("{}{}",base,base);
+//     log_value("This is from rust VVVV");
+//     log_value(&base[0..base.len()]);
+//     return base;
+// }
 
 fn encode_message(message: &str,pixels: Vec<u8>,start: usize) -> Vec<u8> {
     let mut encoded = vec![0u8; 0];
