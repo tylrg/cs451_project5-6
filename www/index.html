@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>WASM Steg Encoder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,600&display=swap" rel="stylesheet">
   </head>
-  <body style="font-family: Arial, Helvetica, sans-serif;">
+  <body style="font-family: 'Exo 2', sans-serif;">
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
 
     <input id="msg-send"></input>
@@ -27,6 +28,14 @@
     <br>
     <pre id="output-pre"></pre> -->
 
+
+    <h2>Decode an Image</h2>
+    <br><br>
+    <input type="file" id="decode-input"/>
+    <br><br>
+    <h3>Hidden Message: </h3>
+    <br>
+    <h4 id="output-message"></h4>
 
     <script src="./bootstrap.js"></script>
   </body>

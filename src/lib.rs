@@ -96,6 +96,14 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     ret.as_ptr()
 }
 
+pub fn decode_message_from_bytes(data: &[u8]) -> String{
+    let ret_val: String =String::from("");
+
+
+
+    return ret_val;
+}
+
 #[wasm_bindgen]
 pub fn get_text(input: &str) -> String {
     String::from(input)
@@ -152,4 +160,66 @@ fn bit_set_at(c: u8, position: usize) -> bool {
 }
 fn bit_at(c: u8, position: usize) -> u8 {
     (c >> (7 - position)) & 0b0000_0001
+}
+
+
+
+
+fn decode_message(pixels: &Vec<u8>) -> String {
+    let mut message = String::from("");
+
+    for bytes in pixels.chunks(8) {
+        // eprintln!("chunk!");
+        if bytes.len() < 8 {
+            panic!("There were less than 8 bytes in chunk");
+        }
+
+        let character = decode_character(bytes);
+
+        if character > 127 {
+            // return Err(StegError::BadDecode(
+            //     "Found non-ascii value in decoded character!".to_string(),
+            // ));
+            return String::from("ERROR IN DETERMINING MESSAGE: NON ASCII VALUE FOUND!"):
+        }
+
+        message.push(char::from(character));
+
+        if char::from(character) == '\0' {
+            // eprintln!("Found terminating null!");
+            break;
+        }
+    }
+
+    message
+}
+
+fn decode_character(bytes: &[u8]) -> u8 {
+    if bytes.len() != 8 {
+        panic!("Tried to decode from less than 8 bytes!");
+    }
+
+    let mut character: u8 = 0b0000_0000;
+
+    for (i, &byte) in bytes.iter().enumerate() {
+        if lsb(byte) {
+            match i {
+                0 => character ^= 0b1000_0000,
+                1 => character ^= 0b0100_0000,
+                2 => character ^= 0b0010_0000,
+                3 => character ^= 0b0001_0000,
+                4 => character ^= 0b0000_1000,
+                5 => character ^= 0b0000_0100,
+                6 => character ^= 0b0000_0010,
+                7 => character ^= 0b0000_0001,
+                _ => panic!("uh oh!"),
+            }
+        }
+    }
+
+    character
+}
+
+fn lsb(byte: u8) -> bool {
+    (0b0000_0001 & byte) == 1
 }
