@@ -96,10 +96,36 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     ret.as_ptr()
 }
 
+#[wasm_bindgen]
 pub fn decode_message_from_bytes(data: &[u8]) -> String{
-    let ret_val: String =String::from("");
+    
+
+    let mut data_bytes:Vec<u8> = Vec::new();
+    let mut header_bytes: Vec<u8> = Vec::new();
+    data_bytes.extend_from_slice(data);
+    let mut newline_count= 0;
+    let mut start = 0;
+    for i in 0..data_bytes.len() {
+        if newline_count == 3{
+            start = i;
+            break;
+        }
+        header_bytes.push(data_bytes[i]);
+        if header_bytes[header_bytes.len()-1] == 10 {
+            log_value("Found a newline");
+            newline_count+=1;
+        }
+    }
+
+    let mut to_decode_vector:Vec<u8> = Vec::new();
+    for i in start..data_bytes.len(){
+        to_decode_vector.push(data_bytes[i]);
+    }
 
 
+    let ret_val: String = decode_message(&to_decode_vector);
+    log_value("Decoded Value: ");
+    log_value(ret_val.as_str());
 
     return ret_val;
 }
@@ -180,7 +206,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
             // return Err(StegError::BadDecode(
             //     "Found non-ascii value in decoded character!".to_string(),
             // ));
-            return String::from("ERROR IN DETERMINING MESSAGE: NON ASCII VALUE FOUND!"):
+            return String::from("ERROR IN DETERMINING MESSAGE: NON ASCII VALUE FOUND!");
         }
 
         message.push(char::from(character));
