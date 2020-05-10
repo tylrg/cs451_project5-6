@@ -48,14 +48,11 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
 
     let mut ret = Vec::new();
     ret.extend_from_slice(data);
-
-    // we have a 15 byte header
-    // for our hardcoded expected
-    // file uploaded dahlia-red-blossom-bloom-60597.ppm
-
-    // let's try turning the entire image white.
-
-    
+    let input_length = input.clone().len();
+    if (input_length*8) > ret.len(){
+        log_value("Input length greater than file size!");
+        return Vec::new().as_ptr();
+    }
 
     let mut start = 99999999; // this skips our hard coded header
     let mut header_bytes: Vec<u8> = Vec::new();
@@ -195,24 +192,26 @@ fn decode_message(pixels: &Vec<u8>) -> String {
     let mut message = String::from("");
 
     for bytes in pixels.chunks(8) {
-        // eprintln!("chunk!");
+
         if bytes.len() < 8 {
-            panic!("There were less than 8 bytes in chunk");
+            log_value("There were less than 8 bytes in chunk");
+            return String::from("ERROR");
         }
 
         let character = decode_character(bytes);
 
+        if character == 1{
+            return String::from("ERROR");
+        }
+
         if character > 127 {
-            // return Err(StegError::BadDecode(
-            //     "Found non-ascii value in decoded character!".to_string(),
-            // ));
-            return String::from("ERROR IN DETERMINING MESSAGE: NON ASCII VALUE FOUND!");
+            log_value("Found non-ascii value in decoded character!");
+            return String::from("ERROR");
         }
 
         message.push(char::from(character));
 
         if char::from(character) == '\0' {
-            // eprintln!("Found terminating null!");
             break;
         }
     }
@@ -222,7 +221,8 @@ fn decode_message(pixels: &Vec<u8>) -> String {
 
 fn decode_character(bytes: &[u8]) -> u8 {
     if bytes.len() != 8 {
-        panic!("Tried to decode from less than 8 bytes!");
+        log_value("Tried to decode from less than 8 bytes!");
+        return 1;
     }
 
     let mut character: u8 = 0b0000_0000;

@@ -2,9 +2,6 @@ import * as wasm from "wasm-ppm";
 
 import { memory } from "wasm-ppm/wasm_ppm_bg";
 
-// tired of seeing this alert
-//wasm.greet();
-
 // make a javascript function that sets the content of
 // an img element by stuffing it with binary
 const setImage = (imageBlob) => {
@@ -31,7 +28,12 @@ const setImage = (imageBlob) => {
 
 
 			let pointerFromRust = wasm.manipulate_image_in_memory(message_to_encode,
-        byteArray);
+				byteArray);
+
+			//breaking for error
+			if(pointerFromRust==1){
+				return;
+			}
 
       let bytesFromRust = new Uint8Array(
         memory.buffer,
@@ -87,7 +89,6 @@ const setImage = (imageBlob) => {
 	);
 }
 
-
 const setImageForDecode = (imageBlob) => {
 	// we need to get an arrayBuffer
 	// that we can then convert to a Uint8Array
@@ -108,6 +109,9 @@ const setImageForDecode = (imageBlob) => {
 			console.log(byteArray);
 
 			let decoded = wasm.decode_message_from_bytes(byteArray);
+			if (decoded == "ERROR"){
+				return;
+			}
 			console.log(decoded);
 			document.getElementById("output-message").innerText = decoded;
 
