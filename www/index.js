@@ -107,62 +107,9 @@ const setImageForDecode = (imageBlob) => {
 
 			console.log(byteArray);
 
-			//let message_to_encode = document.getElementById("msg-send").value;
-
-
 			let decoded = wasm.decode_message_from_bytes(byteArray);
 			console.log(decoded);
 			document.getElementById("output-message").innerText = decoded;
-			// let pointerFromRust = wasm.manipulate_image_in_memory(message_to_encode,
-			// 	byteArray);
-
-			// let bytesFromRust = new Uint8Array(
-			// 	memory.buffer,
-			// 	pointerFromRust,
-			// 	imageLength);
-
-			// now let's go back and stuff the ppm
-			// into the javascript
-			// let blob = new Blob(
-			// 	[bytesFromRust],
-			// 	{ type: 'image/x-portable-pixmap' });
-
-			// stuff these bytes into the
-			// img tag on our page
-			// const url = window.URL.createObjectURL(blob);
-
-			// const img = document.getElementById('img-ppm');
-			// img.src = url;
-
-			// conceptually, what we are doing is
-			// instead of stuffing the blob, which contains our
-			// ppm data into an image tag, we are going to
-			// create 'temporary' link, that download that data
-			// and then we are going to force the browser to
-			// click the the link, progmatically, and then it shows
-			// up as a download
-			// const tempLink = document.createElement('a');
-			// tempLink.style.display = 'none';
-			// tempLink.href = url;
-			// tempLink.setAttribute('download', "test-image.ppm");
-
-			// if (typeof tempLink.download === 'undefined') {
-			// 	tempLink.setAttribute('target', '_blank');
-			// }
-
-			// add the temporary link to the document itself
-			//document.body.appendChild(tempLink);
-
-			// now "click" it
-			//tempLink.click();
-
-			// now remove the link from the document
-			//document.body.removeChild(tempLink);
-
-			// this is some firefox hack
-			// setTimeout(() => {
-			// 	window.URL.revokeObjectURL(url);
-			// }, 100);
 
 		}
 	);
@@ -215,7 +162,6 @@ document.getElementById('decode-input').addEventListener(
 
 			this.value = '';
 
-			//console.log(data);
 
 			setImageForDecode(data);
 		};
