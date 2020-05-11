@@ -22,7 +22,7 @@ pub fn log_value(input: &str){log(input);}//logs to console from rust
 pub fn image_passthrough(data: &[u8]) -> Vec<u8> {
     alert(&format!("image data: {:?}", data));
     let mut ret = Vec::new();
-    ret.extend_from_slice(data);
+    ret.extend_from_slice(data); //not quite sure what this function does but add data to a vector?
     ret
 }
 
@@ -31,7 +31,7 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     // to start with we just want to pass through
     // so whatever we get passed in, we just want
     // to stick it in the wasm memory
-
+    
     //vector of value to return
     let mut ret = Vec::new();
     ret.extend_from_slice(data);//add data to vector
@@ -61,46 +61,30 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     }
 
     if start == 99999999{
-        greet("Invalid PPM Header");
+        greet("Invalid PPM Header");//if we didn't find a start, return invalid header and then return
         return Vec::new().as_ptr();
     }
-    //let header_message = str::from_utf8(&header_bytes).unwrap();
-    //log_value("Header");
-    //log_value(header_message);
+    
+    let encoded = encode_message(&input,ret.clone(),start);//encode the message using the start of the data and the return vectors data
 
-    //log_value("Start");
-    for _i in 0..start{
-        //log_value(" ");
-    }
-    //log_value(start);
+    //set the values in return vector to the encoded message, keep rest of "old" data after message is added
+    for val in 0..encoded.len(){ret[val+start] = encoded[val];}
 
-    let swag = encode_message(&input,ret.clone(),start);    
-
-    let mut assembled: Vec<u8> = Vec::new();
-    for h in header_bytes{
-        //log_value("h");
-        assembled.push(h);
-    }
-
-    for val in 0..swag.len(){
-        ret[val+start] = swag[val];
-    }
-
+    //return the pointer to the vector
     ret.as_ptr()
 }
 
 #[wasm_bindgen]
 pub fn decode_message_from_bytes(data: &[u8]) -> String{
     
-
-    let mut data_bytes:Vec<u8> = Vec::new();
-    let mut header_bytes: Vec<u8> = Vec::new();
-    data_bytes.extend_from_slice(data);
-    let mut newline_count= 0;
-    let mut start = 0;
+    let mut data_bytes:Vec<u8> = Vec::new();//vector for storing image data
+    let mut header_bytes: Vec<u8> = Vec::new();//vector for storing header data
+    data_bytes.extend_from_slice(data);//add data from image to vector
+    let mut newline_count= 0;//set newlines to zero
+    let mut start = 0;//start of 
     for i in 0..data_bytes.len() {
         if newline_count == 3{
-            start = i;
+            start = i;//if we have passed the header
             break;
         }
         header_bytes.push(data_bytes[i]);
@@ -110,25 +94,18 @@ pub fn decode_message_from_bytes(data: &[u8]) -> String{
         }
     }
 
-    let mut to_decode_vector:Vec<u8> = Vec::new();
-    for i in start..data_bytes.len(){
-        to_decode_vector.push(data_bytes[i]);
-    }
+    let mut to_decode_vector:Vec<u8> = Vec::new();//vector of pixel data
+    for i in start..data_bytes.len(){to_decode_vector.push(data_bytes[i]);}//add pixel data only to new vector
 
+    let ret_val: String = decode_message(&to_decode_vector);//decode the message using pixel data
 
-    let ret_val: String = decode_message(&to_decode_vector);
-    //log_value("Decoded Value: ");
-    //log_value(ret_val.as_str());
-
-    return ret_val;
-}
-
-#[wasm_bindgen]
-pub fn get_text(input: &str) -> String {
-    String::from(input)
+    return ret_val;//return the message
 }
 
 
+//encode functions
+
+//encodes a given string into data with a start value 
 fn encode_message(message: &str,pixels: Vec<u8>,start: usize) -> Vec<u8> {
     let mut encoded = vec![0u8; 0];
     let mut start_index = start;
@@ -151,6 +128,7 @@ fn encode_message(message: &str,pixels: Vec<u8>,start: usize) -> Vec<u8> {
     
     encoded
 }
+//returns a set of bytes given a character to encode, returns encoded bytes
 fn encode_character(c: char, bytes: &[u8]) -> [u8; 8] {
     let c = c as u8;
     //log_value(str::from_utf8(&[c]).unwrap());
@@ -166,6 +144,7 @@ fn encode_character(c: char, bytes: &[u8]) -> [u8; 8] {
 
     ret
 }
+//helper functions
 fn bit_set_at(c: u8, position: usize) -> bool {
     bit_at(c, position) == 1
 }
@@ -173,9 +152,9 @@ fn bit_at(c: u8, position: usize) -> u8 {
     (c >> (7 - position)) & 0b0000_0001
 }
 
+//decode functions
 
-
-
+//decodes a message from given pixel data
 fn decode_message(pixels: &Vec<u8>) -> String {
     let mut message = String::from("");
 
@@ -188,6 +167,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
 
         let character = decode_character(bytes);
 
+        //if we had an error in decode_character, return error here too
         if character == 1{
             return String::from("ERROR");
         }
@@ -206,11 +186,11 @@ fn decode_message(pixels: &Vec<u8>) -> String {
 
     message
 }
-
+//decodes a set of bytes to a given character
 fn decode_character(bytes: &[u8]) -> u8 {
     if bytes.len() != 8 {
         greet("Tried to decode from less than 8 bytes!");
-        return 1;
+        return 1;//character that will not be used in ouput, therefore we can use it to flag bad input
     }
 
     let mut character: u8 = 0b0000_0000;
@@ -233,7 +213,7 @@ fn decode_character(bytes: &[u8]) -> u8 {
 
     character
 }
-
+//helper function
 fn lsb(byte: u8) -> bool {
     (0b0000_0001 & byte) == 1
 }

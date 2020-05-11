@@ -3,31 +3,37 @@
   <head>
     <meta charset="utf-8">
     <title>WASM Steg Encoder/Decoder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,600&display=swap" rel="stylesheet"> <!--cooler font-->
   </head>
   <body style="font-family: 'Exo 2', sans-serif; background-color: #aaaaaa; text-align: center;">
     <h1 style="float: left;">WASM Encoder/Decoder</h1>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+
     <br><br><br><br>
+    <!--Encoding Section-->
     <h2>Encode an Image</h2>
     <br>
-    <input id="msg-send" placeholder="Message to encode"></input>
+    <input id="msg-send" placeholder="Message to encode"></input><!--input for message-->
     <br><br>
-    <button  style="border: none;background-color: #555555;color:white;" onclick="document.getElementById('file-input').click()">Select file to encode message to</button>
+    <button  style="border: none;background-color: #555555;color:white;" onclick="document.getElementById('file-input').click()">Select file to encode message to</button><!--I added this button so I could change the file input text-->
     <br>
-    <input style="visibility: hidden;" type="file" id="file-input"/>
+    <input style="visibility: hidden;" type="file" id="file-input"/><!--file input element-->
     <br><br><br>
-    <img src="" id="img-ppm">
+    <img src="" id="img-ppm"> <!--image for downloading-->
     <br><br>
+
+
+
+    <!--Decoding Section-->
     <h2>Decode an Image</h2>
     <br>
-    <button style="border: none;background-color: #555555;color:white"; onclick="document.getElementById('decode-input').click()">Select file to decode message from</button>
+    <button style="border: none;background-color: #555555;color:white"; onclick="document.getElementById('decode-input').click()">Select file to decode message from</button><!--I added this button so I could change the file input text-->
     <br>
-    <input style="visibility: hidden;" type="file" id="decode-input"/>
+    <input style="visibility: hidden;" type="file" id="decode-input"/><!--file input element-->
     <br>
-    <h3>Hidden Message: </h3>
+    <h3>Decoded Message: </h3>
     <br>
-    <h4 id="output-message"></h4>
+    <h4 id="output-message"></h4> <!--output message-->
 
     <script src="./bootstrap.js"></script>
   </body>
