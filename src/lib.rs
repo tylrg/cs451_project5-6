@@ -3,7 +3,6 @@ use std::str;
 
 
 use wasm_bindgen::prelude::*;
-use libsteg;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -29,11 +28,9 @@ pub fn log_value(input: &str){
 
 #[wasm_bindgen]
 pub fn image_passthrough(data: &[u8]) -> Vec<u8> {
-
     alert(&format!("image data: {:?}", data));
     let mut ret = Vec::new();
     ret.extend_from_slice(data);
-
     ret
 }
 
@@ -54,6 +51,11 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
         return Vec::new().as_ptr();
     }
 
+    if input_length ==0 {
+        log_value("No input message!");
+        return Vec::new().as_ptr();
+    }
+
     let mut start = 99999999; // this skips our hard coded header
     let mut header_bytes: Vec<u8> = Vec::new();
     let mut newline_count = 0;
@@ -68,7 +70,11 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
             newline_count+=1;
         }
     }
-    let header_message = str::from_utf8(&header_bytes).unwrap();
+    if start == 99999999{
+        log_value("Invalid PPM Header");
+        return Vec::new().as_ptr();
+    }
+    //let header_message = str::from_utf8(&header_bytes).unwrap();
     //log_value("Header");
     //log_value(header_message);
 
@@ -132,14 +138,6 @@ pub fn get_text(input: &str) -> String {
     String::from(input)
 }
 
-// #[wasm_bindgen]
-// pub fn double(input: &str) -> String {
-//     let base = String::from(input);
-//     let base = format!("{}{}",base,base);
-//     log_value("This is from rust VVVV");
-//     log_value(&base[0..base.len()]);
-//     return base;
-// }
 
 fn encode_message(message: &str,pixels: Vec<u8>,start: usize) -> Vec<u8> {
     let mut encoded = vec![0u8; 0];
@@ -165,7 +163,7 @@ fn encode_message(message: &str,pixels: Vec<u8>,start: usize) -> Vec<u8> {
 }
 fn encode_character(c: char, bytes: &[u8]) -> [u8; 8] {
     let c = c as u8;
-    log_value(str::from_utf8(&[c]).unwrap());
+    //log_value(str::from_utf8(&[c]).unwrap());
     let mut ret = [0u8; 8];
 
     for i in 0..bytes.len() {

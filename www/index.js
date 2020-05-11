@@ -10,7 +10,7 @@ const setImage = (imageBlob) => {
 	// which we can then pass straight through to rust
 	imageBlob.arrayBuffer().then(
 		buff => {
-			console.log(buff);
+			//console.log(buff);
 
 			let byteArray = new Uint8Array(buff);
 
@@ -21,7 +21,7 @@ const setImage = (imageBlob) => {
       // and we need to be able to slice out that chunk
       // of memory
 
-			console.log(byteArray);
+			//console.log(byteArray);
 
 			let message_to_encode = document.getElementById("msg-send").value;
 
@@ -95,7 +95,7 @@ const setImageForDecode = (imageBlob) => {
 	// which we can then pass straight through to rust
 	imageBlob.arrayBuffer().then(
 		buff => {
-			console.log(buff);
+			//console.log(buff);
 
 			let byteArray = new Uint8Array(buff);
 
@@ -106,13 +106,13 @@ const setImageForDecode = (imageBlob) => {
 			// and we need to be able to slice out that chunk
 			// of memory
 
-			console.log(byteArray);
+			//console.log(byteArray);
 
 			let decoded = wasm.decode_message_from_bytes(byteArray);
 			if (decoded == "ERROR"){
 				return;
 			}
-			console.log(decoded);
+			//console.log(decoded);
 			document.getElementById("output-message").innerText = decoded;
 
 		}
