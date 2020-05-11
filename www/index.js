@@ -10,19 +10,13 @@ const setImage = (imageBlob) => {
 	// which we can then pass straight through to rust
 	imageBlob.arrayBuffer().then(
 		buff => {
-			//console.log(buff);
-
 			let byteArray = new Uint8Array(buff);
 
       let imageLength = byteArray.length;
-
       // we need to know the length (size?) of the image
       // because it's going to be stored in memory
       // and we need to be able to slice out that chunk
       // of memory
-
-			//console.log(byteArray);
-
 			let message_to_encode = document.getElementById("msg-send").value;
 
 

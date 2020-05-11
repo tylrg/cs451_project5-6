@@ -47,19 +47,17 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     }
 
     let mut start = 99999999; //no header should be greater than this for some reason
-    let mut header_bytes: Vec<u8> = Vec::new();//
-    let mut newline_count = 0;
+    let mut header_bytes: Vec<u8> = Vec::new();//store the header in this vector
+    let mut newline_count = 0;//amount of newlines counted hack around when header ends and data begins
     for i in 0..ret.len() {
         if newline_count == 3{
-            start = i;
+            start = i;//if we have "passed" the header, set start of data to current index
             break;
         }
 
-        header_bytes.push(ret[i]);
-        if header_bytes[header_bytes.len()-1] == 10 {
-            //greet("Found a newline");
-            newline_count+=1;
-        }
+        header_bytes.push(ret[i]);//add value to header bytes
+        
+        if header_bytes[header_bytes.len()-1] == 10 {newline_count+=1;}//add to newline count if value is newline
     }
 
     if start == 99999999{
