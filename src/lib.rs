@@ -15,7 +15,7 @@ extern {
 }
 
 #[wasm_bindgen]
-pub fn greet(input: &str) {alert(input);}//creates an alert from rust
+pub fn fail(input: &str) {alert(input);}//creates an alert from rust
 pub fn log_value(input: &str){log(input);}//logs to console from rust
 
 #[wasm_bindgen]
@@ -37,12 +37,12 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     ret.extend_from_slice(data);//add data to vector
     let input_length = input.clone().len();//determine length of input message
     if (input_length*8) > ret.len(){
-        greet("Input length greater than file size!");//reject if file can't hold it
+        fail("Input length greater than file size!");//reject if file can't hold it
         return Vec::new().as_ptr();//return empty vector as pointer
     }
 
     if input_length ==0 {
-        greet("No input message!");//if no message,return empty vector as pointer
+        fail("No input message!");//if no message,return empty vector as pointer
         return Vec::new().as_ptr();
     }
 
@@ -61,7 +61,7 @@ pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
     }
 
     if start == 99999999{
-        greet("Invalid PPM Header");//if we didn't find a start, return invalid header and then return
+        fail("Invalid PPM Header");//if we didn't find a start, return invalid header and then return
         return Vec::new().as_ptr();
     }
     
@@ -101,7 +101,6 @@ pub fn decode_message_from_bytes(data: &[u8]) -> String{
 
     return ret_val;//return the message
 }
-
 
 //encode functions
 
@@ -161,7 +160,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
     for bytes in pixels.chunks(8) {
 
         if bytes.len() < 8 {
-            greet("There were less than 8 bytes in chunk");
+            fail("There were less than 8 bytes in chunk");
             return String::from("ERROR");
         }
 
@@ -173,7 +172,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
         }
 
         if character > 127 {
-            greet("Found non-ascii value in decoded character!");
+            fail("Found non-ascii value in decoded character!");
             return String::from("ERROR");
         }
 
@@ -189,7 +188,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
 //decodes a set of bytes to a given character
 fn decode_character(bytes: &[u8]) -> u8 {
     if bytes.len() != 8 {
-        greet("Tried to decode from less than 8 bytes!");
+        fail("Tried to decode from less than 8 bytes!");
         return 1;//character that will not be used in ouput, therefore we can use it to flag bad input
     }
 

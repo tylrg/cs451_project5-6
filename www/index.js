@@ -37,7 +37,7 @@ const setImage = (imageBlob) => {
       const tempLink = document.createElement('a');
       tempLink.style.display = 'none';
       tempLink.href = url;
-      tempLink.setAttribute('download', "test-image.ppm");
+      tempLink.setAttribute('download', "image.ppm");
 
       if (typeof tempLink.download === 'undefined') {
         tempLink.setAttribute('target', '_blank');
@@ -64,6 +64,7 @@ const setImageForDecode = (imageBlob) => {
 			}
 			document.getElementById("output-message").innerText = decoded;//display the output message
 			
+			//create data for txt file to contain (from decoded string)
 			if (!("TextEncoder" in window))
 				alert("Sorry, this browser does not support TextEncoder...");
 			var enc = new TextEncoder();
