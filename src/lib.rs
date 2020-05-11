@@ -1,30 +1,22 @@
 mod utils;
 use std::str;
 
-
 use wasm_bindgen::prelude::*;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
 extern {
-    fn alert(s: &str);
+    fn alert(s: &str);//creates an alert from rust
     #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
+    fn log(s: &str);//used for logging to the console from rust
 }
 
 #[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, wasm-ppm!");
-}
-
-pub fn log_value(input: &str){
-    log(input);
-}
+pub fn greet(input: &str) {alert(input);}//creates an alert from rust
+pub fn log_value(input: &str){log(input);}//logs to console from rust
 
 #[wasm_bindgen]
 pub fn image_passthrough(data: &[u8]) -> Vec<u8> {
@@ -35,43 +27,43 @@ pub fn image_passthrough(data: &[u8]) -> Vec<u8> {
 }
 
 #[wasm_bindgen]
-pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {
-
-    //need to find end of header
-    
+pub fn manipulate_image_in_memory(input: &str,data: &[u8]) -> *const u8 {    
     // to start with we just want to pass through
     // so whatever we get passed in, we just want
     // to stick it in the wasm memory
 
+    //vector of value to return
     let mut ret = Vec::new();
-    ret.extend_from_slice(data);
-    let input_length = input.clone().len();
+    ret.extend_from_slice(data);//add data to vector
+    let input_length = input.clone().len();//determine length of input message
     if (input_length*8) > ret.len(){
-        log_value("Input length greater than file size!");
-        return Vec::new().as_ptr();
+        greet("Input length greater than file size!");//reject if file can't hold it
+        return Vec::new().as_ptr();//return empty vector as pointer
     }
 
     if input_length ==0 {
-        log_value("No input message!");
+        greet("No input message!");//if no message,return empty vector as pointer
         return Vec::new().as_ptr();
     }
 
-    let mut start = 99999999; // this skips our hard coded header
-    let mut header_bytes: Vec<u8> = Vec::new();
+    let mut start = 99999999; //no header should be greater than this for some reason
+    let mut header_bytes: Vec<u8> = Vec::new();//
     let mut newline_count = 0;
     for i in 0..ret.len() {
         if newline_count == 3{
             start = i;
             break;
         }
+
         header_bytes.push(ret[i]);
         if header_bytes[header_bytes.len()-1] == 10 {
-            //log_value("Found a newline");
+            //greet("Found a newline");
             newline_count+=1;
         }
     }
+
     if start == 99999999{
-        log_value("Invalid PPM Header");
+        greet("Invalid PPM Header");
         return Vec::new().as_ptr();
     }
     //let header_message = str::from_utf8(&header_bytes).unwrap();
@@ -115,7 +107,7 @@ pub fn decode_message_from_bytes(data: &[u8]) -> String{
         }
         header_bytes.push(data_bytes[i]);
         if header_bytes[header_bytes.len()-1] == 10 {
-            log_value("Found a newline");
+            //log_value("Found a newline");
             newline_count+=1;
         }
     }
@@ -127,8 +119,8 @@ pub fn decode_message_from_bytes(data: &[u8]) -> String{
 
 
     let ret_val: String = decode_message(&to_decode_vector);
-    log_value("Decoded Value: ");
-    log_value(ret_val.as_str());
+    //log_value("Decoded Value: ");
+    //log_value(ret_val.as_str());
 
     return ret_val;
 }
@@ -192,7 +184,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
     for bytes in pixels.chunks(8) {
 
         if bytes.len() < 8 {
-            log_value("There were less than 8 bytes in chunk");
+            greet("There were less than 8 bytes in chunk");
             return String::from("ERROR");
         }
 
@@ -203,7 +195,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
         }
 
         if character > 127 {
-            log_value("Found non-ascii value in decoded character!");
+            greet("Found non-ascii value in decoded character!");
             return String::from("ERROR");
         }
 
@@ -219,7 +211,7 @@ fn decode_message(pixels: &Vec<u8>) -> String {
 
 fn decode_character(bytes: &[u8]) -> u8 {
     if bytes.len() != 8 {
-        log_value("Tried to decode from less than 8 bytes!");
+        greet("Tried to decode from less than 8 bytes!");
         return 1;
     }
 

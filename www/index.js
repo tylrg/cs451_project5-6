@@ -32,6 +32,7 @@ const setImage = (imageBlob) => {
 
 			//breaking for error
 			if(pointerFromRust==1){
+				location.reload();
 				return;
 			}
 
@@ -110,6 +111,7 @@ const setImageForDecode = (imageBlob) => {
 
 			let decoded = wasm.decode_message_from_bytes(byteArray);
 			if (decoded == "ERROR"){
+				location.reload();
 				return;
 			}
 			//console.log(decoded);
@@ -172,30 +174,6 @@ document.getElementById('decode-input').addEventListener(
 
 		// actually read the file in
 		reader.readAsArrayBuffer(file);
-	},
-	false
-);
-
-
-document.getElementById('btn-update').addEventListener(
-	'click',
-	function() {
-		var txtArea = document.getElementById('text-input');
-		var inputText = txtArea.value;
-		var outputText = wasm.get_text(inputText);
-		var outputPre = document.getElementById('output-pre');
-		outputPre.textContent = outputText;
-	},
-	false
-);
-
-document.getElementById('get-text').addEventListener(
-	'click',
-	function () {
-		var text = document.getElementById("msg-send").value;
-		//var base = wasm.double(text);
-		//wasm.double(text);
-		//console.log(base);
 	},
 	false
 );
