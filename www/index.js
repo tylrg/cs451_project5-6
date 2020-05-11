@@ -63,8 +63,35 @@ const setImageForDecode = (imageBlob) => {
 				return;
 			}
 			document.getElementById("output-message").innerText = decoded;//display the output message
+			
+			if (!("TextEncoder" in window))
+				alert("Sorry, this browser does not support TextEncoder...");
+			var enc = new TextEncoder();
+			let decodedBytes = enc.encode(decoded);//lol
+
+			let blob = new Blob(
+				[decodedBytes],
+				{ type: 'text/plain' });
+
+			//establish and "click" url for dowloading
+			const url = window.URL.createObjectURL(blob);
+			const img = document.getElementById('img-ppm');
+			img.src = url;
+			const tempLink = document.createElement('a');
+			tempLink.style.display = 'none';
+			tempLink.href = url;
+			tempLink.setAttribute('download', "decoded-message");
+
+			if (typeof tempLink.download === 'undefined') {
+				tempLink.setAttribute('target', '_blank');
+			}
+			document.body.appendChild(tempLink);
+			tempLink.click();
+			document.body.removeChild(tempLink);
+			setTimeout(() => { window.URL.revokeObjectURL(url); }, 100);
 
 		}
+
 	);
 }
 
